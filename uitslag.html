@@ -17,7 +17,7 @@
     
     <script>
         const laadTable = async () => {
-            const response = await fetch('http://localhost:8000/landelijke_uitslag/werkelijk/');
+            const response = await fetch('http://localhost:8000/landelijke_uitslag/werkelijk');
             const myJson = await response.json(); //extract JSON from the http response
 
             var table = document.getElementById('uitslag');

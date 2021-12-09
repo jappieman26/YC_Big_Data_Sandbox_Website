@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemeente Uitslagen</title>
+</head>
+<body>
+    <h1>Gemeente uitslagen</h1>
+    <label>Kies een gemeente</label>
+    <select name="gemeentes" id="gemeentes" onchange="laadGemeenteUitslag(this.value)">Kies een gemeente!</select>
+
+    <div id="uitslagDiv" hidden>
+        <h2 id="uitslagLabel">Uitslag van: </h2>
+        <table id="uitslagTable"">
+            <tr>
+                <th>Partij</th>
+                <th>Aantal stemmen</th>
+            </tr>
+        </table>"
+    </div>
+
+    <script>
+        const laadGemeentes = async () => {
+            var gemeentes = document.getElementById('gemeentes');
+            const response = await fetch('http://localhost:8000/gemeente/list');
+            const myJson = await response.json(); //extract JSON from the http response
+
+            for (const key in myJson){
+                var option = document.createElement("option");
+                option.value = myJson[key];
+                option.text = myJson[key];
+                gemeentes.append(option);
+            }
+        }
+
+        const laadGemeenteUitslag = async (gemeente) => {
+            console.log(gemeente)
+            var uitslagDiv = document.getElementById("uitslagDiv")
+            uitslagDiv.hidden = false
+
+            var table = document.getElementById("uitslagTable")
+            var label = document.getElementById("uitslagLabel")
+
+            const response = await fetch('http://localhost:8000/gemeente/uitslag/' + gemeente);
+            const myJson = await response.json(); //extract JSON from the http response
+
+            label.innerHTML = "Uitslag van: " + gemeente
+
+            for (const partij in myJson['aantal stemmen']){
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + partij + '</td>' +
+                '<td>' + myJson["aantal stemmen"][partij] + '</td>';
+                table.appendChild(tr);
+            }
+        }
+
+        window.onload = laadGemeentes()
+    </script>
+    
+</body>
+</html>
