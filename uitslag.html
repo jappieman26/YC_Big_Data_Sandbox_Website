@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landelijke uitslag</title>
+</head>
+<body>
+    <h1>Landelijke uitslag</h1>
+
+    <table id="uitslag">
+        <th>Partij</th>
+        <th>Zetels</th>
+        <th>Aantal Stemmen</th>
+    </table>
+    
+    <script>
+        const laadTable = async () => {
+            const response = await fetch('http://localhost:8000/landelijke_uitslag/werkelijk/');
+            const myJson = await response.json(); //extract JSON from the http response
+
+            var table = document.getElementById('uitslag');
+            
+            for (const partij in myJson["aantal zetels"]){
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + partij + '</td>' +
+                '<td>' + myJson["aantal zetels"][partij] + '</td>' +
+                '<td>' + myJson["totaal aantal stemmen"][partij] + '</td>';
+                table.appendChild(tr);
+            }
+        }
+        
+        window.onload = laadTable()
+    </script>
+</body>
+</html>
