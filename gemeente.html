@@ -8,17 +8,24 @@
 </head>
 <body>
     <h1>Gemeente uitslagen</h1>
+    <form action="index.html">
+        <input type="submit" value="Terug" />
+    </form>
     <label>Kies een gemeente</label>
     <select name="gemeentes" id="gemeentes" onchange="laadGemeenteUitslag(this.value)">Kies een gemeente!</select>
 
     <div id="uitslagDiv" hidden>
         <h2 id="uitslagLabel">Uitslag van: </h2>
-        <table id="uitslagTable"">
-            <tr>
-                <th>Partij</th>
-                <th>Aantal stemmen</th>
-            </tr>
-        </table>"
+        <table id="uitslagTable">
+            <thead>
+                <tr>
+                    <th>Partij</th>
+                    <th>Aantal stemmen</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
 
     <script>
@@ -36,7 +43,6 @@
         }
 
         const laadGemeenteUitslag = async (gemeente) => {
-            console.log(gemeente)
             var uitslagDiv = document.getElementById("uitslagDiv")
             uitslagDiv.hidden = false
 
@@ -47,13 +53,17 @@
             const myJson = await response.json(); //extract JSON from the http response
 
             label.innerHTML = "Uitslag van: " + gemeente
+            var body = document.createElement('tbody');
 
-            for (const partij in myJson['aantal stemmen']){
+            for (const partij in myJson['stemmen']){
                 var tr = document.createElement('tr');
                 tr.innerHTML = '<td>' + partij + '</td>' +
-                '<td>' + myJson["aantal stemmen"][partij] + '</td>';
-                table.appendChild(tr);
+                '<td>' + myJson["stemmen"][partij] + '</td>';
+                body.appendChild(tr);
             }
+            var old_body = table.getElementsByTagName('tbody')[0];
+            old_body.parentNode.replaceChild(body, old_body)
+
         }
 
         window.onload = laadGemeentes()

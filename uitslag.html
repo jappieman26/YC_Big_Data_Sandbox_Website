@@ -8,6 +8,9 @@
 </head>
 <body>
     <h1>Landelijke uitslag</h1>
+    <form action="index.html">
+        <input type="submit" value="Terug" />
+    </form>
 
     <table id="uitslag">
         <th>Partij</th>
@@ -16,11 +19,12 @@
     </table>
     
     <script>
-        const laadTable = async () => {
+        const laadTabel = async () => {
             const response = await fetch('http://localhost:8000/landelijke_uitslag/werkelijk');
             const myJson = await response.json(); //extract JSON from the http response
 
             var table = document.getElementById('uitslag');
+            console.log(myJson)
             
             for (const partij in myJson["aantal zetels"]){
                 var tr = document.createElement('tr');
@@ -31,7 +35,7 @@
             }
         }
         
-        window.onload = laadTable()
+        window.onload = laadTabel()
     </script>
 </body>
 </html>
