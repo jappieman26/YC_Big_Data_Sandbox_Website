@@ -18,19 +18,20 @@
         <th>Aantal Stemmen</th>
     </table>
     
+    <script src="var.js"></script>
     <script>
         const laadTabel = async () => {
-            const response = await fetch('http://localhost:8000/landelijke_uitslag/werkelijk');
+            const response = await fetch(`${BASEURL}/landelijke_uitslag/werkelijk`);
             const myJson = await response.json(); //extract JSON from the http response
 
             var table = document.getElementById('uitslag');
             console.log(myJson)
             
-            for (const partij in myJson["aantal zetels"]){
+            for (const partij in myJson["zetels"]){
                 var tr = document.createElement('tr');
                 tr.innerHTML = '<td>' + partij + '</td>' +
-                '<td>' + myJson["aantal zetels"][partij] + '</td>' +
-                '<td>' + myJson["totaal aantal stemmen"][partij] + '</td>';
+                '<td>' + myJson["zetels"][partij] + '</td>' +
+                '<td>' + myJson["stemmen"][partij] + '</td>';
                 table.appendChild(tr);
             }
         }

@@ -28,10 +28,11 @@
         </table>
     </div>
 
+    <script src="var.js"></script>
     <script>
         const laadGemeentes = async () => {
             var gemeentes = document.getElementById('gemeentes');
-            const response = await fetch('http://localhost:8000/gemeente/list');
+            const response = await fetch(`${BASEURL}/gemeente/list`);
             const myJson = await response.json(); //extract JSON from the http response
 
             for (const key in myJson){
@@ -49,7 +50,7 @@
             var table = document.getElementById("uitslagTable")
             var label = document.getElementById("uitslagLabel")
 
-            const response = await fetch('http://localhost:8000/gemeente/uitslag/' + gemeente);
+            const response = await fetch(`${BASEURL}/gemeente/uitslag/${gemeente}`);
             const myJson = await response.json(); //extract JSON from the http response
 
             label.innerHTML = "Uitslag van: " + gemeente
