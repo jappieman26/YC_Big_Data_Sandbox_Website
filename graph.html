@@ -4,10 +4,79 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graph view</title>
+    <title>Uitslag grafiek</title>
 </head>
 <body>
+    <label>Kies een uitslag verdeeling</label><br>
+    <select name="sleutels" id="sleutels" onchange="checkNBox(this.value)">Kies een sleutel!</select>
+    <input type="button" onclick="laadGraph()" value="Toon grafiek">
+    <div id="nDiv" hidden>
+        <input type="number" id="nBox">
+    </div>
+    <div id="graphDiv" hidden>
+        <img id="graphImg">
+    </div>
+
     
-    
+    <script src="var.js"></script>
+    <script>
+        const laadSleutels = async () => {
+            const sleutels = document.getElementById('sleutels');
+            const response = await fetch(`${BASEURL}/verdeelsleutels/list`);
+            const myJson = await response.json(); //extract JSON from the http response
+
+            for (const key in myJson){
+                var option = document.createElement("option");
+                option.value = myJson[key];
+                option.text = myJson[key];
+                sleutels.appendChild(option);
+            }
+        }
+
+        const checkNBox = (sleutel) => {
+            const box = document.getElementById("nDiv");
+            if (sleutel == "top n"){
+                box.hidden = false;
+            }else{
+                box.hidden = true;
+            }
+
+        }
+
+        const laadGraph = async () => {
+            const graphDiv = document.getElementById("graphDiv");
+            const graphImg = document.getElementById("graphImg");
+            const sleutel = document.getElementById("sleutels").value;
+            const nValue = document.getElementById("nBox").value;
+
+
+            graphDiv.hidden = false;
+
+            var data = { "type": sleutel, "opties": nValue}
+            console.log(data)
+
+            const response = await fetch(`${BASEURL}/plot_los`,{
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(res => res.blob())
+            .then(blob =>{
+                let objectURL = URL.createObjectURL(blob)
+                graphImg.src = objectURL
+            })
+            .catch(err => {
+                alert(err)
+            });
+        }
+        
+
+        
+        window.onload = laadSleutels()
+    </script>
 </body>
 </html>
