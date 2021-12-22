@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provincie</title>
+</head>
+<body>
+    <div>
+        <div id="infoDiv">
+            <h2>Geef elke provincie een waarde van hoe zwaar deze moet worden meegerekent</h2>
+        </div>
+        <div id="resetDiv" hidden>
+            <input type="button" onclick="resetView()" value="Reset uitslag">
+        </div>
+    </div>
+    <div id="slidersDiv">
+        <input type="button" onclick="laadUitslag()" value="Bereken uitslag"><br><br>
+    </div>
+    <div id="uitslagDiv" hidden>
+        <table id="uitslagTable">
+            <th>Partij</th>
+            <th>Zetels</th>
+        </table>
+    </div>
+
+    <script src="var.js"></script>
+    <script>
+
+        const laadProvincies = async () => {
+            const sliderDiv = document.getElementById("slidersDiv");
+
+            const response = await fetch(`${BASEURL}/provincies/list`);
+            const json = await response.json();
+
+            for(const i in json){
+                const provincie = json[i];
+                const newDiv = document.createElement("div");
+                newDiv.id = `${provincie}Div`;
+
+                const label = document.createElement("label");
+                label.innerHTML = `Kies een waarde voor ${provincie}:`;
+                newDiv.appendChild(label);
+                newDiv.appendChild(document.createElement("br"))
+
+                const slider = document.createElement("input");
+                slider.id=provincie;
+                slider.type='range'
+                slider.min=0;
+                slider.max=10;
+                slider.value=1;
+                newDiv.appendChild(slider);
+
+
+                sliderDiv.appendChild(newDiv);
+            }
+        }
+
+        const laadUitslag = async () => {
+            const uitslagTable = document.getElementById('uitslagTable')
+            const provincieResponse = await fetch(`${BASEURL}/provincies/list`);
+            const json = await provincieResponse.json();
+
+            let data = {}
+
+            for(const i in json){
+                const provincie = json[i];
+                const value = document.getElementById(provincie).value;
+                data[provincie] = value;
+            }
+
+            const uitslagResponse = await fetch(`${BASEURL}/landelijke_uitslag/provincies`,{
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+                
+            })
+            const uitslagJSON = await uitslagResponse.json();
+
+            for( const partij in uitslagJSON[0]){
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + partij + '</td>' +
+                '<td>' + uitslagJSON[0][partij] + '</td>'
+                uitslagTable.appendChild(tr);
+            }
+
+            document.getElementById("resetDiv").hidden = false;
+            document.getElementById("slidersDiv").hidden = true;
+            document.getElementById("uitslagDiv").hidden = false;
+        }
+
+        const resetView = () => {
+            document.getElementById("resetDiv").hidden = true;
+            document.getElementById("slidersDiv").hidden = false;
+            document.getElementById("uitslagDiv").hidden = true;
+        }
+
+
+        window.onload=laadProvincies();
+    </script>
+    
+</body>
+</html>
