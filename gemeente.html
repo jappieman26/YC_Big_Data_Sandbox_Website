@@ -11,8 +11,11 @@
     <form action="index.html">
         <input type="submit" value="Terug" />
     </form>
-    <label>Kies een gemeente</label>
-    <select name="gemeentes" id="gemeentes" onchange="laadGemeenteUitslag(this.value)">Kies een gemeente!</select>
+    <br>
+    <label>Kies een gemeente:</label>
+    <select name="gemeentes" id="gemeentes" onchange="laadGemeenteUitslag(this.value)">
+        <option value="" selected disabled hidden>----------</option>
+    </select>
 
     <div id="uitslagDiv" hidden>
         <h2 id="uitslagLabel">Uitslag van: </h2>
