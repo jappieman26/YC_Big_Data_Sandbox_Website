@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landelijke uitslag</title>
+</head>
+<body>
+    <h1>Landelijke uitslag</h1>
+    <form action="index.html">
+        <input type="submit" value="Terug"/>
+    </form>
+
+    <div id="tabelDiv">
+        <h2 id="tabelLabel">Zetelverdeling in tabelvorm</h2>
+
+        <table id="uitslagTabel">
+            <thead>
+                <tr>
+                    <th>Partij</th>
+                    <th>Zetels</th>
+                    <th>Aantal stemmen</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div id="grafiekDiv">
+        <h2 id="grafiekLabel">Zetelverdeling in grafiekvorm</h2>
+
+        <img id="uitslagGrafiek">
+    </div>
+
+    <script src=var.js></script>
+    <script>
+        const laadTabel = async () => {
+            const response = await fetch(`${BASEURL}/landelijke_uitslag/werkelijk`);
+            const myJson = await response.json(); //extract JSON from the http response
+
+            var table = document.getElementById('uitslagTabel');
+            console.log(myJson)
+            
+            for (const partij in myJson["zetels"]){
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + partij + '</td>' +
+                '<td>' + myJson["zetels"][partij] + '</td>' +
+                '<td>' + myJson["stemmen"][partij] + '</td>';
+                table.appendChild(tr);
+            }
+        }
+
+        const laadGrafiek = async () => {
+            graphImg = document.getElementById("uitslagGrafiek")
+
+            let data = {"type": "landelijk"}
+
+            await fetch(`${BASEURL}/plot_los`,{
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(res => res.blob())
+            .then(blob =>{
+                let objectURL = URL.createObjectURL(blob)
+                graphImg.src = objectURL
+            })
+            .catch(err => {
+                alert(err)
+            });
+        }
+        
+        window.onload = laadTabel()
+        window.onload = laadGrafiek()
+    </script>
+</body>
+</html>

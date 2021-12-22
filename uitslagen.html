@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uitslag grafiek</title>
+</head>
+<body>
+    <form action="index.html">
+        <input type="submit" value="Terug" />
+    </form>
+<br>
+    <label>Kies een zetelverdeelsleutel:</label><br>
+    <select name="sleutels" id="sleutels" onchange="checkNBox(this.value)">Kies een sleutel!</select>
+    <input type="button" onclick="laadInfo()" value="Toon informatie">
+    <div id="nDiv" hidden>
+        <input type="number" id="nBox">
+    </div>
+
+    <div id="tabelDiv" hidden>
+        <h2 id="tabelLabel">Zetelverdeling in tabelvorm</h2>
+
+        <table id="uitslagTabel">
+            <thead>
+                <tr>
+                    <th>Partij</th>
+                    <th>Zetels</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div id="graphDiv" hidden>
+        <h2>Grafiek van de zetelverdeling</h2>
+        <img id="graphImg">
+    </div>
+
+    
+    <script src="var.js"></script>
+    <script>
+        const laadSleutels = async () => {
+            const sleutels = document.getElementById('sleutels');
+            const response = await fetch(`${BASEURL}/verdeelsleutels/list`);
+            const myJson = await response.json(); //extract JSON from the http response
+
+            for (const key in myJson){
+                var option = document.createElement("option");
+                option.value = myJson[key];
+                option.text = myJson[key];
+                sleutels.appendChild(option);
+            }
+        }
+
+        const checkNBox = (sleutel) => {
+            const box = document.getElementById("nDiv");
+            if (sleutel == "top n"){
+                box.hidden = false;
+            }else{
+                box.hidden = true;
+            }
+        }
+
+        const laadInfo = async () => {
+            const sleutel = document.getElementById("sleutels").value;
+            const nValue = document.getElementById("nBox").value;
+            var data = { "type": sleutel, "opties": nValue}
+            console.log(data)
+
+            // inladen van de tabel met stemmen
+            let tabelDiv = document.getElementById("tabelDiv")
+            tabelDiv.hidden = false
+            const tabelResponse = await fetch(`${BASEURL}/tabel_los`,{
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const tabelJson = await tabelResponse.json(); //extract JSON from the http response
+
+            var table = document.getElementById('uitslagTabel');
+            var body = document.createElement('tbody')
+            
+            for (const partij in tabelJson["zetels"]){
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + partij + '</td>' +
+                '<td>' + tabelJson["zetels"][partij] + '</td>';
+                body.appendChild(tr);
+            }
+
+            var old_body = table.getElementsByTagName('tbody')[0];
+            old_body.parentNode.replaceChild(body, old_body)
+
+            // inladen van de grafiek
+            const graphDiv = document.getElementById("graphDiv");
+            const graphImg = document.getElementById("graphImg");
+            graphDiv.hidden = false;
+
+            const grafiekResponse = await fetch(`${BASEURL}/plot_los`,{
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.blob())
+            .then(blob =>{
+                let objectURL = URL.createObjectURL(blob)
+                graphImg.src = objectURL
+            })
+            .catch(err => {
+                alert(err)
+            });
+        }
+        
+        
+        window.onload = laadSleutels()
+    </script>
+</body>
+</html>
