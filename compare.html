@@ -4,36 +4,55 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
     <title>Vergelijk uitslagen</title>
 </head>
 <body>
-    <h2>Verdeelsleutels vergelijken</h2>
-    <form action="index.html">
-        <input type="submit" value="Terug"/>
-    </form>
-    <label>Kies twee sleutels om met elkaar te verdelen</label>
-    <select name="sleutels" id="sleutels" onchange="showOptions(this.value,1)">Kies een sleutel!</select>
-    <select name="sleutels2" id="sleutels2" onchange="showOptions(this.value,2)">Kies een sleutel!</select>
-    <input type="button" onclick="showGraph()" value="Laad grafiek">
-
-    <div id="n1Div" hidden>
-        <p>Kies een nummer voor sleutel 1</p>
-        <input type="number" id="n1Value">
-    </div>
-    <div id="n2Div" hidden>
-        <p>Kies een nummer voor sleutel 2</p>
-        <input type="number" id="n2Value">
+    <div class="topnav">
+        <a href="index.html">Home</a>
+        <a href="landelijkeuitslag.html">Landelijke uitslag</a>
+        <a href="gemeente.html">Uitslag per gemeente</a>
+        <a href="province.html">Landelijke uitslag met provincie wegingen</a>
+        <a href="uitslagen.html">Uitslagen van de verschillende verdeelsleutels</a>
+        <a class="active" href="compare.html">Grafische vergelijking van verdeelsleutels</a>
     </div>
 
-    <div id="slidersDiv1" hidden>
-        <h4>Stel de wegingen in voor sleutel 1</h4>
-    </div>
-    <div id="slidersDiv2" hidden>
-        <h4>Stel de wegingen in voor sleutel 2</h4>
-    </div>
+    <div style="margin-left: 1%;">
+        <h2>Verdeelsleutels vergelijken</h2>
 
-    <div id="imageDiv">
-        <img id="imgElement">
+        <label>Kies twee sleutels om met elkaar te verdelen</label>
+        <select name="sleutels" id="sleutels" onchange="showOptions(this.value,1)">Kies een sleutel!</select>
+        <select name="sleutels2" id="sleutels2" onchange="showOptions(this.value,2)">Kies een sleutel!</select>
+        <input type="button" onclick="showGraph()" value="Laad grafiek">
+
+        <div id="n1Div" hidden>
+            <p>Kies een nummer voor sleutel 1</p>
+            <input type="number" id="n1Value">
+        </div>
+
+        <div id="n2Div" hidden>
+            <p>Kies een nummer voor sleutel 2</p>
+            <input type="number" id="n2Value">
+        </div>
+        
+        <div id="imageDiv">
+            <img id="imgElement">
+        </div>
+
+        <div id="sliders" style="display: flex;">
+            <div id="slidersDiv1" style="width: 25%;" hidden>
+                <h4>Stel de wegingen in voor sleutel 1</h4>
+            </div>
+
+            <div id="slidersDiv2" style="flex-grow: 1; margin-left: 3%;" hidden>
+                <h4>Stel de wegingen in voor sleutel 2</h4>
+            </div>
+        </div>
+
+        
     </div>
     
     <script src="var.js"></script>
@@ -85,6 +104,7 @@
 
                 const slider1 = document.createElement("input");
                 slider1.id=provincie+1;
+                slider1.className="slider";
                 slider1.type='range'
                 slider1.min=0;
                 slider1.max=10;
@@ -93,6 +113,7 @@
 
                 const slider2 = document.createElement("input");
                 slider2.id=provincie+2;
+                slider2.className="slider";
                 slider2.type='range'
                 slider2.min=0;
                 slider2.max=10;
@@ -177,6 +198,8 @@
                 alert(err)
             });
 
+            // document.getElementById("slidersDiv1").hidden = true;
+            // document.getElementById("slidersDiv2").hidden = true;
         }
 
         window.onload=laadSleutels()
