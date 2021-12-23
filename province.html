@@ -4,28 +4,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
     <title>Provincie</title>
 </head>
 <body>
-    <div>
-        <div id="infoDiv">
-            <h2>Geef elke provincie een waarde van hoe zwaar deze moet worden meegerekent</h2>
-            <form action="index.html">
-                <input type="submit" value="Terug"/>
-            </form>
+    <div class="topnav">
+        <a href="index.html">Home</a>
+        <a href="landelijkeuitslag.html">Landelijke uitslag</a>
+        <a href="gemeente.html">Uitslag per gemeente</a>
+        <a class="active" href="province.html">Landelijke uitslag met provincie wegingen</a>
+        <a href="uitslagen.html">Uitslagen van de verschillende verdeelsleutels</a>
+        <a href="compare.html">Grafische vergelijking van verdeelsleutels</a>
+    </div>
+    <div style="margin-left: 1%;">
+        <div>
+            <div id="infoDiv">
+                <h2>Geef elke provincie een waarde van hoe zwaar deze moet worden meegerekend</h2>
+            </div>
         </div>
-        <div id="resetDiv" hidden>
+
+        <div id="berekenDiv">
+            <div id="slidersDiv"></div><br>
+            <input type="button" onclick="laadUitslag()" value="Bereken uitslag">
+        </div>
+
+        <div id="uitslagDiv" hidden>
+            <table id="uitslagTable" style="width: 30%;">
+                <th>Partij</th>
+                <th>Zetels</th>
+            </table>
+
             <input type="button" onclick="resetView()" value="Reset uitslag">
         </div>
-    </div>
-    <div id="slidersDiv">
-        <input type="button" onclick="laadUitslag()" value="Bereken uitslag"><br><br>
-    </div>
-    <div id="uitslagDiv" hidden>
-        <table id="uitslagTable">
-            <th>Partij</th>
-            <th>Zetels</th>
-        </table>
     </div>
 
     <script src="var.js"></script>
@@ -49,6 +62,7 @@
 
                 const slider = document.createElement("input");
                 slider.id=provincie;
+                slider.className="slider"
                 slider.type='range'
                 slider.min=0;
                 slider.max=10;
@@ -91,13 +105,11 @@
                 uitslagTable.appendChild(tr);
             }
 
-            document.getElementById("resetDiv").hidden = false;
-            document.getElementById("slidersDiv").hidden = true;
+            document.getElementById("berekenDiv").hidden = true;
             document.getElementById("uitslagDiv").hidden = false;
         }
 
         const resetView = () => {
-            document.getElementById("resetDiv").hidden = true;
             document.getElementById("slidersDiv").hidden = false;
             document.getElementById("uitslagDiv").hidden = true;
         }
