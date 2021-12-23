@@ -4,31 +4,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
     <title>Gemeente Uitslagen</title>
 </head>
 <body>
-    <h1>Gemeente uitslagen</h1>
-    <form action="index.html">
-        <input type="submit" value="Terug" />
-    </form>
-    <br>
-    <label>Kies een gemeente:</label>
-    <select name="gemeentes" id="gemeentes" onchange="laadGemeenteUitslag(this.value)">
-        <option value="" selected disabled hidden>----------</option>
-    </select>
+    <div class="topnav">
+        <a href="index.html">Home</a>
+        <a href="landelijkeuitslag.html">Landelijke uitslag</a>
+        <a class="active" href="gemeente.html">Uitslag per gemeente</a>
+        <a href="province.html">Landelijke uitslag met provincie wegingen</a>
+        <a href="uitslagen.html">Uitslagen van de verschillende verdeelsleutels</a>
+        <a href="compare.html">Grafische vergelijking van verdeelsleutels</a>
+    </div>
+    <div style="margin-left: 1%;">
+        <h1>Gemeente uitslagen</h1>
+        <label>Kies een gemeente:</label>
+        <select name="gemeentes" id="gemeentes" onchange="laadGemeenteUitslag(this.value)">
+            <option value="" selected disabled hidden>----------</option>
+        </select>
 
-    <div id="uitslagDiv" hidden>
-        <h2 id="uitslagLabel">Uitslag van: </h2>
-        <table id="uitslagTable">
-            <thead>
-                <tr>
-                    <th>Partij</th>
-                    <th>Aantal stemmen</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div id="uitslagDiv" hidden>
+            <h2 id="uitslagLabel">Uitslag van: </h2>
+            <table id="uitslagTable" style="width: 40%;">
+                <thead>
+                    <tr>
+                        <th>Partij</th>
+                        <th>Aantal stemmen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script src="var.js"></script>
