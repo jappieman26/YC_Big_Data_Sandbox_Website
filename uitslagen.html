@@ -31,7 +31,7 @@
             <input type="number" id="nBox">
         </div>
 
-        <div id="slidersDiv" hidden></div>
+        
 
         <div id="uitslagDiv" style="display: flex;" hidden>
 
@@ -57,6 +57,7 @@
                 </table>
             </div>
         </div>
+        <div id="slidersDiv" hidden></div>
     </div>
     
     <script src="var.js"></script>
@@ -102,7 +103,6 @@
                 slider.max=10;
                 slider.value=1;
                 newDiv.appendChild(slider);
-
 
                 sliderDiv.appendChild(newDiv);
             }
@@ -192,7 +192,7 @@
             });
 
             document.getElementById("uitslagDiv").hidden = false
-            document.getElementById("slidersDiv").hidden = true
+            // document.getElementById("slidersDiv").hidden = true
         }
         
         

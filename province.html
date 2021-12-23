@@ -33,8 +33,12 @@
 
         <div id="uitslagDiv" hidden>
             <table id="uitslagTable" style="width: 30%;">
-                <th>Partij</th>
-                <th>Zetels</th>
+                <thead>
+                    <th>Partij</th>
+                    <th>Zetels</th>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
 
             <input type="button" onclick="resetView()" value="Reset uitslag">
@@ -102,20 +106,23 @@
                 
             })
 
+            var tbody = document.createElement('tbody');
             const uitslagJSON = await uitslagResponse.json();
             for( const partij in uitslagJSON['zetels']){
                 var tr = document.createElement('tr');
                 tr.innerHTML = '<td>' + partij + '</td>' +
                 '<td>' + uitslagJSON['zetels'][partij] + '</td>'
-                uitslagTable.appendChild(tr);
+                tbody.appendChild(tr)
             }
+            var old_body = uitslagTable.getElementsByTagName('tbody')[0];
+            old_body.parentNode.replaceChild(tbody, old_body)
 
             document.getElementById("berekenDiv").hidden = true;
             document.getElementById("uitslagDiv").hidden = false;
         }
 
         const resetView = () => {
-            document.getElementById("slidersDiv").hidden = false;
+            document.getElementById("berekenDiv").hidden = false;
             document.getElementById("uitslagDiv").hidden = true;
         }
 
