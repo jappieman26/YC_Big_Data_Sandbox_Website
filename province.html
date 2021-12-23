@@ -101,12 +101,12 @@
                 body: JSON.stringify(data),
                 
             })
-            const uitslagJSON = await uitslagResponse.json();
 
-            for( const partij in uitslagJSON[0]){
+            const uitslagJSON = await uitslagResponse.json();
+            for( const partij in uitslagJSON['zetels']){
                 var tr = document.createElement('tr');
                 tr.innerHTML = '<td>' + partij + '</td>' +
-                '<td>' + uitslagJSON[0][partij] + '</td>'
+                '<td>' + uitslagJSON['zetels'][partij] + '</td>'
                 uitslagTable.appendChild(tr);
             }
 
