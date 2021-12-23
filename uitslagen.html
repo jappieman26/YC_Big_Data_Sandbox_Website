@@ -4,44 +4,60 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
     <title>Uitslag grafiek</title>
 </head>
 <body>
-    <h2>Verdeelsleutels</h2>
-    <form action="index.html">
-        <input type="submit" value="Terug" />
-    </form>
-    <br>
-    <label>Kies een zetelverdeelsleutel:</label><br>
-    <select name="sleutels" id="sleutels" onchange="showOptions(this.value)">Kies een sleutel!</select>
-    <input type="button" onclick="laadInfo()" value="Toon informatie">
-    <br>
-    <div id="nDiv" hidden>
-        <input type="number" id="nBox">
+    <div class="topnav">
+        <a href="index.html">Home</a>
+        <a href="landelijkeuitslag.html">Landelijke uitslag</a>
+        <a href="gemeente.html">Uitslag per gemeente</a>
+        <a href="province.html">Landelijke uitslag met provincie wegingen</a>
+        <a class="active" href="uitslagen.html">Uitslagen van de verschillende verdeelsleutels</a>
+        <a href="compare.html">Grafische vergelijking van verdeelsleutels</a>
     </div>
 
-    <div id="slidersDiv" hidden></div>
+    <div style="margin-left: 1%;">
+        <h2>Verdeelsleutels</h2>
 
-    <div id="tabelDiv" hidden>
-        <h2 id="tabelLabel">Zetelverdeling in tabelvorm</h2>
+        <label>Kies een zetelverdeelsleutel:</label><br>
+        <select name="sleutels" id="sleutels" onchange="showOptions(this.value)">Kies een sleutel!</select>
+        <input type="button" onclick="laadInfo()" value="Toon informatie">
 
-        <table id="uitslagTabel">
-            <thead>
-                <tr>
-                    <th>Partij</th>
-                    <th>Zetels</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div id="nDiv" hidden>
+            <input type="number" id="nBox">
+        </div>
+
+        <div id="slidersDiv" hidden></div>
+
+        <div id="uitslagDiv" style="display: flex;" hidden>
+
+            <div id="graphDiv" style="width: 65%;">
+                <h2>Grafiek van de zetelverdeling</h2>
+                <img id="graphImg">
+            </div>
+
+            <div id="tabelDiv" style="flex-grow: 1; margin-left: 3%;">
+                <h2 id="tabelLabel">Zetelverdeling in tabelvorm</h2>
+
+                <table id="uitslagTabel" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Partij</th>
+                            <th>Zetels</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
     </div>
-    <br>
-    <div id="graphDiv" hidden>
-        <h2>Grafiek van de zetelverdeling</h2>
-        <img id="graphImg">
-    </div>
-
     
     <script src="var.js"></script>
     <script>
@@ -80,7 +96,8 @@
 
                 const slider = document.createElement("input");
                 slider.id=provincie;
-                slider.type='range'
+                slider.className="slider";
+                slider.type='range';
                 slider.min=0;
                 slider.max=10;
                 slider.value=1;
@@ -127,7 +144,7 @@
 
             // inladen van de tabel met stemmen
             let tabelDiv = document.getElementById("tabelDiv")
-            tabelDiv.hidden = false
+            
             const tabelResponse = await fetch(`${BASEURL}/tabel_los`,{
                 method: 'POST',
                 mode: 'cors',
@@ -155,7 +172,7 @@
             // inladen van de grafiek
             const graphDiv = document.getElementById("graphDiv");
             const graphImg = document.getElementById("graphImg");
-            graphDiv.hidden = false;
+            
 
             const grafiekResponse = await fetch(`${BASEURL}/plot_los`,{
                 method: 'POST',
@@ -173,6 +190,9 @@
             .catch(err => {
                 alert(err)
             });
+
+            document.getElementById("uitslagDiv").hidden = false
+            document.getElementById("slidersDiv").hidden = true
         }
         
         
