@@ -12,9 +12,10 @@
         <input type="submit" value="Terug"/>
     </form>
     <label>Kies twee sleutels om met elkaar te verdelen</label>
-    <select name="sleutels" id="sleutels" onchange="showN(this.value,1)">Kies een sleutel!</select>
-    <select name="sleutels2" id="sleutels2" onchange="showN(this.value,2)">Kies een sleutel!</select>
+    <select name="sleutels" id="sleutels" onchange="showOptions(this.value,1)">Kies een sleutel!</select>
+    <select name="sleutels2" id="sleutels2" onchange="showOptions(this.value,2)">Kies een sleutel!</select>
     <input type="button" onclick="showGraph()" value="Laad grafiek">
+
     <div id="n1Div" hidden>
         <p>Kies een nummer voor sleutel 1</p>
         <input type="number" id="n1Value">
@@ -23,6 +24,14 @@
         <p>Kies een nummer voor sleutel 2</p>
         <input type="number" id="n2Value">
     </div>
+
+    <div id="slidersDiv1" hidden>
+        <h4>Stel de wegingen in voor sleutel 1</h4>
+    </div>
+    <div id="slidersDiv2" hidden>
+        <h4>Stel de wegingen in voor sleutel 2</h4>
+    </div>
+
     <div id="imageDiv">
         <img id="imgElement">
     </div>
@@ -45,12 +54,70 @@
             }
         }
 
-        const showN = (value, n) => {
+        const laadProvincies = async () => {
+            const slidersDiv1 = document.getElementById("slidersDiv1");
+            const slidersDiv2 = document.getElementById("slidersDiv2");
+
+            const response = await fetch(`${BASEURL}/provincies/list`);
+            const json = await response.json();
+            
+            provinciesArr = []
+
+            for(const i in json){
+                const provincie = json[i];
+
+                const newDiv1 = document.createElement("div");
+                newDiv1.id = `${provincie}Div1`;
+                const newDiv2 = document.createElement("div");
+                newDiv2.id = `${provincie}Div2`;
+
+                provinciesArr.push(provincie)
+
+                const label1 = document.createElement("label");
+                label1.innerHTML = `Kies een waarde voor ${provincie}:`;
+                newDiv1.appendChild(label1);
+                newDiv1.appendChild(document.createElement("br"))
+
+                const label2 = document.createElement("label");
+                label2.innerHTML = `Kies een waarde voor ${provincie}:`;
+                newDiv2.appendChild(label2);
+                newDiv2.appendChild(document.createElement("br"))
+
+                const slider1 = document.createElement("input");
+                slider1.id=provincie+1;
+                slider1.type='range'
+                slider1.min=0;
+                slider1.max=10;
+                slider1.value=1;
+                newDiv1.appendChild(slider1);
+
+                const slider2 = document.createElement("input");
+                slider2.id=provincie+2;
+                slider2.type='range'
+                slider2.min=0;
+                slider2.max=10;
+                slider2.value=1;
+                newDiv2.appendChild(slider2);
+
+                slidersDiv1.appendChild(newDiv1);
+                slidersDiv2.appendChild(newDiv2);
+            }
+            localStorage.setItem('provinciesArray', JSON.stringify(provinciesArr))
+        }
+
+        const showOptions = (sleutel, n) => {
             const el = document.getElementById(`n${n}Div`);
-            if(value == "top n"){
+            if(sleutel == "top n"){
                 el.hidden = false;
             }else{
                 el.hidden = true;
+            }
+
+            const slidersDiv = document.getElementById(`slidersDiv${n}`)
+            if (sleutel == "per provincie"){
+                slidersDiv.hidden = false
+            }else{
+                slidersDiv.hidden = true
             }
         }
 
@@ -64,15 +131,30 @@
 
             imgDiv.hidden = false;
 
+            let weights1 = {}
+            let weights2 = {}
+            let provinciesArr = JSON.parse(localStorage.getItem('provinciesArray'))
+
+            for(const i in provinciesArr){
+                const provincie = provinciesArr[i]
+                const w1 = document.getElementById(provincie+1).value;
+                weights1[provincie] = w1;
+
+                const w2 = document.getElementById(provincie+2).value;
+                weights2[provincie] = w2;
+            }
+
             const data = {
                             "sleutels":[
                                 {
                                     "type": sleutel1,
-                                    "opties": n1
+                                    "n": n1,
+                                    "weights": weights1
                                 },
                                 {
                                     "type": sleutel2,
-                                    "opties": n2
+                                    "n": n2,
+                                    "weights": weights2
                                 }
                             ]
                         }
@@ -98,6 +180,7 @@
         }
 
         window.onload=laadSleutels()
+        window.onload=laadProvincies()
     </script>
 </body>
 </html>
