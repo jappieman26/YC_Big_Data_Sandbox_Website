@@ -11,13 +11,16 @@
     <form action="index.html">
         <input type="submit" value="Terug" />
     </form>
-<br>
+    <br>
     <label>Kies een zetelverdeelsleutel:</label><br>
-    <select name="sleutels" id="sleutels" onchange="checkNBox(this.value)">Kies een sleutel!</select>
+    <select name="sleutels" id="sleutels" onchange="showOptions(this.value)">Kies een sleutel!</select>
     <input type="button" onclick="laadInfo()" value="Toon informatie">
+    <br>
     <div id="nDiv" hidden>
         <input type="number" id="nBox">
     </div>
+
+    <div id="slidersDiv" hidden></div>
 
     <div id="tabelDiv" hidden>
         <h2 id="tabelLabel">Zetelverdeling in tabelvorm</h2>
@@ -55,19 +58,71 @@
             }
         }
 
-        const checkNBox = (sleutel) => {
+        const laadProvincies = async () => {
+            const sliderDiv = document.getElementById("slidersDiv");
+
+            const response = await fetch(`${BASEURL}/provincies/list`);
+            const json = await response.json();
+            
+            provinciesArr = []
+
+            for(const i in json){
+                const provincie = json[i];
+                const newDiv = document.createElement("div");
+                newDiv.id = `${provincie}Div`;
+
+                provinciesArr.push(provincie)
+
+                const label = document.createElement("label");
+                label.innerHTML = `Kies een waarde voor ${provincie}:`;
+                newDiv.appendChild(label);
+                newDiv.appendChild(document.createElement("br"))
+
+                const slider = document.createElement("input");
+                slider.id=provincie;
+                slider.type='range'
+                slider.min=0;
+                slider.max=10;
+                slider.value=1;
+                newDiv.appendChild(slider);
+
+
+                sliderDiv.appendChild(newDiv);
+            }
+            localStorage.setItem('provinciesArray', JSON.stringify(provinciesArr))
+        }
+
+        const showOptions = (sleutel) => {
             const box = document.getElementById("nDiv");
             if (sleutel == "top n"){
                 box.hidden = false;
             }else{
                 box.hidden = true;
             }
+            
+            const slidersDiv = document.getElementById("slidersDiv")
+            if (sleutel == "per provincie"){
+                slidersDiv.hidden = false
+            }else{
+                slidersDiv.hidden = true
+            }
         }
+
 
         const laadInfo = async () => {
             const sleutel = document.getElementById("sleutels").value;
             const nValue = document.getElementById("nBox").value;
-            var data = { "type": sleutel, "opties": nValue}
+
+            let weights = {}
+            let provinciesArr = JSON.parse(localStorage.getItem('provinciesArray'))
+
+            for(const i in provinciesArr){
+                const provincie = provinciesArr[i]
+                const value = document.getElementById(provincie).value;
+                weights[provincie] = value;
+            }
+
+            var data = { "type": sleutel, "n": nValue, "weights": weights}
             console.log(data)
 
             // inladen van de tabel met stemmen
@@ -122,6 +177,7 @@
         
         
         window.onload = laadSleutels()
+        window.onload = laadProvincies()
     </script>
 </body>
 </html>

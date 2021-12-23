@@ -50,10 +50,14 @@
             const response = await fetch(`${BASEURL}/provincies/list`);
             const json = await response.json();
 
+            provinciesArr = []
+
             for(const i in json){
                 const provincie = json[i];
                 const newDiv = document.createElement("div");
                 newDiv.id = `${provincie}Div`;
+
+                provinciesArr.push(provincie)
 
                 const label = document.createElement("label");
                 label.innerHTML = `Kies een waarde voor ${provincie}:`;
@@ -72,17 +76,18 @@
 
                 sliderDiv.appendChild(newDiv);
             }
+            localStorage.setItem('provinciesArray', JSON.stringify(provinciesArr))
         }
 
         const laadUitslag = async () => {
             const uitslagTable = document.getElementById('uitslagTable')
-            const provincieResponse = await fetch(`${BASEURL}/provincies/list`);
-            const json = await provincieResponse.json();
 
             let data = {}
+            let provinciesArr = JSON.parse(localStorage.getItem('provinciesArray'))
+            console.log(provinciesArr)
 
-            for(const i in json){
-                const provincie = json[i];
+            for(const i in provinciesArr){
+                const provincie = provinciesArr[i]
                 const value = document.getElementById(provincie).value;
                 data[provincie] = value;
             }
