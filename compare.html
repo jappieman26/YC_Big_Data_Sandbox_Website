@@ -4,9 +4,100 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Vergelijk uitslagen</title>
 </head>
 <body>
+    <h2>Verdeelsleutels vergelijken</h2>
+    <form action="index.html">
+        <input type="submit" value="Terug"/>
+    </form>
+    <label>Kies twee sleutels om met elkaar te verdelen</label>
+    <select name="sleutels" id="sleutels" onchange="showN(this.value,1)">Kies een sleutel!</select>
+    <select name="sleutels2" id="sleutels2" onchange="showN(this.value,2)">Kies een sleutel!</select>
+    <input type="button" onclick="showGraph()" value="Laad grafiek">
+    <div id="n1Div" hidden>
+        <p>Kies een nummer voor sleutel 1</p>
+        <input type="number" id="n1Value">
+    </div>
+    <div id="n2Div" hidden>
+        <p>Kies een nummer voor sleutel 2</p>
+        <input type="number" id="n2Value">
+    </div>
+    <div id="imageDiv">
+        <img id="imgElement">
+    </div>
     
+    <script src="var.js"></script>
+    <script>
+        const laadSleutels = async () => {
+            var sleutels = document.getElementById('sleutels');
+            var sleutels2 = document.getElementById('sleutels2');
+            const response = await fetch(`${BASEURL}/verdeelsleutels/list`);
+            const myJson = await response.json(); //extract JSON from the http response
+
+            for (const key in myJson){
+                var option = document.createElement("option");
+                option.value = myJson[key];
+                option.text = myJson[key];
+                var option2 = option.cloneNode(true)
+                sleutels.appendChild(option);
+                sleutels2.appendChild(option2);
+            }
+        }
+
+        const showN = (value, n) => {
+            const el = document.getElementById(`n${n}Div`);
+            if(value == "top n"){
+                el.hidden = false;
+            }else{
+                el.hidden = true;
+            }
+        }
+
+        const showGraph = async () => {
+            const sleutel1 = document.getElementById("sleutels").value;
+            const sleutel2 = document.getElementById("sleutels2").value;
+            const n1 = document.getElementById("n1Value").value;
+            const n2 = document.getElementById("n2Value").value;
+            const imgDiv = document.getElementById("imageDiv");
+            const imgElement = document.getElementById("imgElement");
+
+            imgDiv.hidden = false;
+
+            const data = {
+                            "sleutels":[
+                                {
+                                    "type": sleutel1,
+                                    "opties": n1
+                                },
+                                {
+                                    "type": sleutel2,
+                                    "opties": n2
+                                }
+                            ]
+                        }
+            
+            const response = await fetch(`${BASEURL}/plot2functies`,{
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+                
+            })
+            .then(res => res.blob())
+            .then(blob =>{
+                let objectURL = URL.createObjectURL(blob)
+                imgElement.src = objectURL
+            })
+            .catch(err => {
+                alert(err)
+            });
+
+        }
+
+        window.onload=laadSleutels()
+    </script>
 </body>
 </html>

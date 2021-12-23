@@ -36,6 +36,11 @@
 
     <script src=var.js></script>
     <script>
+        const laadData = () => {
+            laadGrafiek();
+            laadTabel();
+        }
+
         const laadTabel = async () => {
             const response = await fetch(`${BASEURL}/landelijke_uitslag/werkelijk`);
             const myJson = await response.json(); //extract JSON from the http response
@@ -75,8 +80,7 @@
             });
         }
         
-        window.onload = laadTabel()
-        window.onload = laadGrafiek()
+        window.onload = laadData()
     </script>
 </body>
 </html>
